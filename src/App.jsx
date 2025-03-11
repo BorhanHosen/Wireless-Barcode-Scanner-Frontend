@@ -19,11 +19,11 @@ import PCScreen from "./components/PCScreen";
 function App() {
   return (
     <div className="w-full md:flex justify-center">
-      <div className="md:w-1/2">
+      {/* <div className="md:w-1/2">
         <h1>Supermarket Barcode System</h1>
         <PCBarcodeDisplay />
         <MobileBarcodeScanner />
-      </div>
+      </div> */}
       <div className="md:w-1/2 bg-slate-300">
         <h1>Supermarket Barcode System</h1>
         <PCScreen />
