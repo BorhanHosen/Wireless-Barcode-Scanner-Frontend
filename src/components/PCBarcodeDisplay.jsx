@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
-const socket = io("wireless-barcode-scanner-backend-production.up.railway.app");
+const socket = io(
+  "https://wireless-barcode-scanner-backend-production.up.railway.app"
+);
 
 const PCBarcodeDisplay = () => {
   const [barcode, setBarcode] = useState("");
@@ -20,7 +22,9 @@ const PCBarcodeDisplay = () => {
 
   const fetchProduct = async (barcode) => {
     try {
-      const response = await fetch(`http://localhost:5000/products/${barcode}`);
+      const response = await fetch(
+        `https://wireless-barcode-scanner-backend-production.up.railway.app/products/${barcode}`
+      );
       if (!response.ok) throw new Error("Product not found");
       const data = await response.json();
       setProduct(data);
