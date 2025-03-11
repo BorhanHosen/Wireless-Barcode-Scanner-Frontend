@@ -1,58 +1,57 @@
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import React, { useState } from "react";
+import { io } from "socket.io-client";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 const socket = io(
   "https://wireless-barcode-scanner-backend-production.up.railway.app"
 );
 
-const PCBarcodeDisplay = () => {
-  const [barcode, setBarcode] = useState("");
-  const [product, setProduct] = useState(null);
+const BarcodeScanner = () => {
+  const [uniqueKey, setUniqueKey] = useState("");
+  const [scanner, setScanner] = useState(null);
 
-  useEffect(() => {
-    socket.emit("registerPC", "PC-1");
+  const startScanner = () => {
+    if (!uniqueKey.trim()) {
+      alert("Enter a unique key to connect to PC!");
+      return;
+    }
 
-    socket.on("barcodeReceived", (scannedBarcode) => {
-      setBarcode(scannedBarcode);
-      fetchProduct(scannedBarcode);
+    const html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", {
+      fps: 10,
+      qrbox: 250,
+      rememberLastUsedCamera: true,
     });
 
-    return () => socket.off("barcodeReceived");
-  }, []);
+    html5QrcodeScanner.render(
+      (decodedText) => {
+        console.log("Scanned:", decodedText);
+        socket.emit("scanBarcode", { uniqueKey, barcode: decodedText });
+      },
+      (error) => console.warn("Scan error:", error)
+    );
 
-  const fetchProduct = async (barcode) => {
-    try {
-      const response = await fetch(
-        `https://wireless-barcode-scanner-backend-production.up.railway.app/products/${barcode}`
-      );
-      if (!response.ok) throw new Error("Product not found");
-      const data = await response.json();
-      setProduct(data);
-    } catch (error) {
-      setProduct(null);
-    }
+    setScanner(html5QrcodeScanner);
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="text-xl font-bold">Scanned Barcode: {barcode}</h1>
-      {product ? (
-        <div>
-          <p>
-            <strong>Product Name:</strong> {product.productName}
-          </p>
-          <p>
-            <strong>Category:</strong> {product.productCategory}
-          </p>
-          <p>
-            <strong>Price:</strong> ${product.productPrice}
-          </p>
-        </div>
-      ) : (
-        <p>No product found</p>
-      )}
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Mobile Scanner</h1>
+      <input
+        type="text"
+        placeholder="Enter PC Key"
+        className="border p-2"
+        value={uniqueKey}
+        onChange={(e) => setUniqueKey(e.target.value)}
+      />
+      <button
+        onClick={startScanner}
+        className="bg-blue-500 text-white p-2 mt-2"
+      >
+        Start Scanning
+      </button>
+      <div id="qr-reader" className="mt-4"></div>
     </div>
   );
 };
 
-export default PCBarcodeDisplay;
+export default BarcodeScanner;
