@@ -55,7 +55,7 @@ const BarcodeScanner = () => {
     const html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", {
       fps: 10,
       qrbox: 250,
-      rememberLastUsedCamera: true,
+      rememberLastUsedCamera: false,
     });
 
     html5QrcodeScanner.render(
