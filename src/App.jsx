@@ -12,10 +12,10 @@ function App() {
           </h1>
         </div>
         <div className="flex h-full py-5">
-          <div className="w-1/3">
+          <div className="w-1/2">
             <BarcodeScanner />
           </div>
-          <div className="w-2/3">
+          <div className="w-1/2">
             <PCScreen />
           </div>
         </div>
